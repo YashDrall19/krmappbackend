@@ -1,4 +1,7 @@
 from pathlib import Path
+from datetime import timedelta
+import os
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,6 +24,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+  'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -50,17 +54,18 @@ TEMPLATES = [
 WSGI_APPLICATION = 'krmappbackend.wsgi.application'
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'krmappbackend',      # Database name
-        'USER': 'root',            # MySQL user
-        'PASSWORD': '3306',    # MySQL password
-        'HOST': 'localhost',         # Or your MySQL server IP
-        'PORT': '3306',              # Default MySQL port
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
-    }
+    'default': dj_database_url.config(default='')
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'krmappbackend',      # Database name
+    #     'USER': 'root',            # MySQL user
+    #     'PASSWORD': '3306',    # MySQL password
+    #     'HOST': 'localhost',         # Or your MySQL server IP
+    #     'PORT': '3306',              # Default MySQL port
+    #     'OPTIONS': {
+    #         'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+    #     },
+    # }
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -86,5 +91,17 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATIC_URL = 'static/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
